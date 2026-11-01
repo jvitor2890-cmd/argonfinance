@@ -1,7 +1,8 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Receipt,
@@ -9,8 +10,10 @@ import {
   BarChart3,
   TrendingUp,
   Zap,
+  LogOut,
 } from 'lucide-react';
 import clsx from 'clsx';
+import { createClient } from '@/lib/supabase/client';
 
 const navItems = [
   { href: '/dashboard',   label: 'Dashboard',         icon: LayoutDashboard, ready: true  },
@@ -22,6 +25,21 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUserEmail(user?.email ?? null);
+    });
+  }, []);
+
+  async function handleLogout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push('/login');
+  }
 
   return (
     <aside className="flex h-screen w-64 flex-shrink-0 flex-col bg-argon-navy select-none">
@@ -72,16 +90,36 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Demo Badge */}
+      {/* Operador */}
       <div className="border-t border-argon-navy-700 px-4 py-4">
-        <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 px-3 py-2.5">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-amber-400">
-            ⚠ Modo Demonstração
-          </p>
-          <p className="mt-0.5 text-[10px] text-amber-400/70">
-            Dados fictícios para apresentação
-          </p>
-        </div>
+        {userEmail ? (
+          <div className="flex items-center gap-2">
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-argon-muted">
+                Operador
+              </p>
+              <p className="mt-0.5 text-[11px] text-slate-300 truncate" title={userEmail}>
+                {userEmail}
+              </p>
+            </div>
+            <button
+              onClick={handleLogout}
+              title="Sair"
+              className="flex-shrink-0 p-1.5 rounded-lg text-slate-400 hover:bg-white/10 hover:text-white transition-colors"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        ) : (
+          <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 px-3 py-2.5">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-amber-400">
+              ⚠ Modo Demonstração
+            </p>
+            <p className="mt-0.5 text-[10px] text-amber-400/70">
+              Dados fictícios para apresentação
+            </p>
+          </div>
+        )}
       </div>
     </aside>
   );
