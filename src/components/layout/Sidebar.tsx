@@ -13,18 +13,20 @@ import {
   Zap,
   LogOut,
   ChevronDown,
+  Landmark,
 } from 'lucide-react';
 import clsx from 'clsx';
 import { createClient } from '@/lib/supabase/client';
 import { useEmpresa } from '@/contexts/EmpresaContext';
 
 const navItems = [
-  { href: '/dashboard',   label: 'Dashboard',    icon: LayoutDashboard },
-  { href: '/empresas',    label: 'Empresas',     icon: Building2 },
-  { href: '/lancamentos', label: 'Lançamentos',  icon: Receipt },
-  { href: '/contas',      label: 'Contas a P/R', icon: CreditCard },
-  { href: '/dre',         label: 'DRE Gerencial', icon: BarChart3 },
-  { href: '/simulador',   label: 'Simulador',    icon: TrendingUp },
+  { href: '/dashboard',    label: 'Dashboard',      icon: LayoutDashboard },
+  { href: '/empresas',     label: 'Empresas',       icon: Building2 },
+  { href: '/lancamentos',  label: 'Lançamentos',    icon: Receipt },
+  { href: '/contas',       label: 'Contas a P/R',   icon: CreditCard },
+  { href: '/conciliacao',  label: 'Conciliação',    icon: Landmark },
+  { href: '/dre',          label: 'DRE Gerencial',  icon: BarChart3 },
+  { href: '/simulador',    label: 'Simulador',      icon: TrendingUp },
 ];
 
 export function Sidebar() {
